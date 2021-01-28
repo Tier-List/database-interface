@@ -1,0 +1,1 @@
+{"id":"522b3c01-adb4-462c-bfba-448d2939e3d9","space":398,"runtime":"nodejs12.x","name":"wp-db","path":"bx0x20","project":"b00upxd8","account":"144798365827","region":"us-east-1","deps":["body-parser@^1.19.0","deta@0.0.8","dotenv@^8.2.0","express@^4.17.1"],"envs":null,"public":true,"log_level":"debug","cron":"","reload_deps":false}

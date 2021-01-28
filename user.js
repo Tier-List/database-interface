@@ -7,13 +7,16 @@ const { Deta } = require("deta");
 const deta = Deta(process.env.PROJECT_KEY);
 const router = express.Router();
 
-router.use(express.json());
-
 // initialize user table
+const polls = deta.Base("polls");
 const users = deta.Base("users");
 
 // routes
-router.post("/new", (req, res) => {
+router.get("/", async (req, res) => {
+    res.json({ "msg": "Users – WPDBS" });
+});
+
+router.post("/new", async (req, res) => {
     users.insert({
         "username": req.body.username,
         "password": req.body.password,
@@ -25,7 +28,7 @@ router.post("/new", (req, res) => {
         .catch(err => console.error(err));
 });
 
-router.post("/edit-password", (req, res) => {
+router.post("/edit-password", async (req, res) => {
     users.update({
         "password": req.body.password
     }, req.body.username)
@@ -55,7 +58,7 @@ router.post("/add-poll-voted", async (req, res) => {
         .catch(err => console.error(err));
 });
 
-router.post("/add-flag", async (req, res) => {
+router.post("/flag", async (req, res) => {
     let user = await users.get(req.body.username);
     user["n_flags"] += 1;
 
@@ -63,6 +66,14 @@ router.post("/add-flag", async (req, res) => {
         users.delete(req.body.username)
             .then(() => res.redirect("/"))
             .catch(err => console.error(err));
+        
+        all_polls = await polls.fetch({ "username": req.body.username }).next();
+
+        for(let poll of all_polls["value"]) {
+            polls.delete(poll["key"]);
+        }
+
+        res.sendStatus(202);
     } else {
         users.update({
             "n_flags": user["n_flags"]

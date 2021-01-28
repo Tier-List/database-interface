@@ -7,14 +7,16 @@ const { Deta } = require("deta");
 const deta = Deta(process.env.PROJECT_KEY);
 const router = express.Router();
 
-router.use(express.json());
-
 // initialize tables
 const users = deta.Base("users");
 const polls = deta.Base("polls");
 
 // routes
-router.post("/new", (req, res) => {
+router.get("/", async (req, res) => {
+    res.json({ "msg": "Polls – WPDBS" });
+});
+
+router.post("/new", async (req, res) => {
     polls.insert({
         "username": req.body.username,
         "question": req.body.question,
@@ -62,7 +64,7 @@ router.post("/flag", async (req, res) => {
             polls.delete(poll["key"]);
         }
 
-        res.sendStatus(200);
+        res.sendStatus(202);
     } else {
         polls.update({
             n_flags
